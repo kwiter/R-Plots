@@ -12,3 +12,16 @@
 dtree and ctree can be any icon.
 Just make sure the icon is cropped to the edges.
 
+# R-SquarePie
+Square Pie or Waffle Chart for R
+*    data: vector of counts with names
+*    size.gap: fraction of column height is gap between squares, fraction = icon.height/size.gap
+*    nh: number of squares high
+*    nw: number of squares wide
+*    Sub.Title defaults to total "number" of units
+
+Needs colorRange function in kwiter/R-Colors/ColorTools.r 
+
+
+This chart should be saved as a square
+
