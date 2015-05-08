@@ -143,6 +143,210 @@ squarePie <- function(data,size.gap = 10,Main.Title = 'Main Title',Sub.Title=NA,
   
 }
 
+##
+####radar Plot
+##
+
+radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F){
+  #values: matrix of indivsXvalues giving mean response
+  #val.l: matrix of indivsXlow credible interval values
+  #val.h: matrix of indivsXlow credible interval values
+  #scale.within: scale the values within each chart
+  #legend: add legend
+  
+  #scale.within = F
+  
+  #values <- allQ[,-1] 
+  #val.l <- allQ.lo[,-1]
+  #val.h <- allQ.hi[,-1]
+  
+  max.v <- max(val.h,na.rm=T)
+  min.v <- min(val.l,na.rm=T)
+  
+  dims = c(ceiling(sqrt(nrow(values))),nrow(values) -ceiling(sqrt(nrow(values))))
+  par(mfrow=c(dims[1],dims[2]),pty='s',mar=c(1,1,2,1),bg='black')
+  for(i in 1:dim(values)[1]){  #if scaleing within
+    
+    if(scale.within==T){
+      max.v <- max(val.h[i,],na.rm=T)
+      min.v <- min(val.l[i,],na.rm=T)
+    }
+    
+    inner.c <- (max.v + abs(min.v))/10
+    outer.r <- max.v + abs(min.v) + inner.c + inner.c
+    values[is.na(values)] <- 0
+    val.l[is.na(val.l)] <- 0
+    val.h[is.na(val.h)] <- 0
+    npara <- dim(values)[2]
+    angles <- 360/npara
+    
+    polarTOcart <- function(angle,radius,inner.c=0){#angle in degrees adds an inner radius
+      radius <- radius + inner.c
+      if(angle <= 90){  
+        x <- radius*sin(angle*2*pi/360)
+        y <- radius*cos(angle*2*pi/360)}
+      if(90 < angle & angle <= 180){  
+        x <- radius*cos((angle-90)*2*pi/360)
+        y <- -radius*sin((angle-90)*2*pi/360)}
+      if(180 < angle & angle <= 270){  
+        x <- -radius*sin((angle-180)*2*pi/360)
+        y <- -radius*cos((angle-180)*2*pi/360)}
+      if(270 < angle & angle <= 360){  
+        x <- -radius*cos((angle-270)*2*pi/360)
+        y <- radius*sin((angle-270)*2*pi/360)}
+      list(x=x,y=y)
+    }
+    
+    
+    #split.screen(c(4,3))
+    #par(mfrow=c(1,1),pty='s',mar=c(2,1,2,1))
+    #for(i in 1:dim(values)[1]){  #if scaling amoung
+    plot( 1,1,xlim=c(-outer.r,outer.r),ylim=c(-outer.r,outer.r),
+          type='n',xlab='',ylab='',main=rownames(values)[i],
+          bty='n',xaxt='n',yaxt='n',col.main='white')
+    
+    point.mat <- val.mat <- out.mat <- inn.mat <- zer.mat <- matrix(NA,dim(values)[2],2) #hold vertices for later use
+    for(j in 1:dim(values)[2]){ #plots values
+      if(j == dim(values)[2]){
+        one <- polarTOcart(angles*(j-1),values[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*0,values[i,1],inner.c+abs(min.v))
+        # lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }else{
+        one <- polarTOcart(angles*(j-1),values[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*j,values[i,j+1],inner.c+abs(min.v))
+        #lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }
+      val.mat[j,] <- c(one$x,one$y)
+      
+      one <- polarTOcart(angles*(j-1),val.l[i,j],inner.c+abs(min.v)) #plots credible intervals
+      two <- polarTOcart(angles*(j-1),val.h[i,j],inner.c+abs(min.v))
+      lines(c(one$x,two$x),c(one$y,two$y),lty=1,lwd=4,col=4)
+      
+      if(j == dim(values)[2]){ #plot outer CI
+        one <- polarTOcart(angles*(j-1),val.h[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*0,val.h[i,j],inner.c+abs(min.v))
+        #lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }else{
+        one <- polarTOcart(angles*(j-1),val.h[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*j,val.h[i,j],inner.c+abs(min.v))
+        #lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }  
+      out.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plot inner CI
+        one <- polarTOcart(angles*(j-1),val.l[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*0,val.l[i,j],inner.c+abs(min.v))
+        #lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }else{
+        one <- polarTOcart(angles*(j-1),val.l[i,j],inner.c+abs(min.v))
+        two <- polarTOcart(angles*j,val.l[i,j],inner.c+abs(min.v))
+        #lines(c(one$x,two$x),c(one$y,two$y),lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=1,lwd=1)
+      }  
+      inn.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plots inner circle
+        one <- polarTOcart(angles*(j-1),inner.c)
+        two <- polarTOcart(angles*0,inner.c)
+        lines(c(one$x,two$x),c(one$y,two$y)) 
+      }else{
+        one <- polarTOcart(angles*(j-1),inner.c)
+        two <- polarTOcart(angles*j,inner.c)
+        lines(c(one$x,two$x),c(one$y,two$y))       
+      }
+      point.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plots zerolines
+        one <- polarTOcart(angles*(j-1),inner.c+abs(min.v))
+        two <- polarTOcart(angles*0,inner.c+abs(min.v))
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2,col='red') 
+      }else{
+        one <- polarTOcart(angles*(j-1),inner.c+abs(min.v))
+        two <- polarTOcart(angles*j,inner.c+abs(min.v))
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2,col='red')       
+      }
+      zer.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plots outer lines
+        one <- polarTOcart(angles*(j-1),outer.r)
+        two <- polarTOcart(angles*0,outer.r)
+        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col='white',lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=2) 
+      }else{
+        one <- polarTOcart(angles*(j-1),outer.r)
+        two <- polarTOcart(angles*j,outer.r)
+        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col='white',lwd=2) 
+        #lines(c(one$x,0),c(one$y,0),lty=2)
+      }
+      
+      if(values[i,j] == 0)next
+      par(xpd=T)
+      if(colnames(values)[j]=='SL'){
+        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,GDsGS[i],srt=0 - angles*(j-1),col='white')  
+      }else{
+        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,colnames(values)[j],srt=0 - angles*(j-1),col='white')
+      }
+      par(xpd=F)
+    }
+    polygon(x=as.numeric(val.mat[,1]),y=as.numeric(val.mat[,2]),col=rgb(.2,.2,.5,.5),border=NA)
+    #polygon(x=as.numeric(out.mat[,1]),y=as.numeric(out.mat[,2]),col=rgb(0,0,1,.25),border=NA)
+    #polygon(x=as.numeric(out.mat[,1]),y=as.numeric(inn.mat[,2]),col='white',border=NA)
+    #polygon(x=as.numeric(zer.mat[,1]),y=as.numeric(out.mat[,2]),col=rgb(1,0,0,.25),border=NA)
+    polygon(x=as.numeric(point.mat[,1]),y=as.numeric(point.mat[,2]),col=1,border=NA) 
+  }
+  
+  ###legend
+  if(legend==T){
+    plot( 1,1,xlim=c(-outer.r,outer.r),ylim=c(-outer.r,outer.r),
+          type='n',xlab='',ylab='',
+          bty='n',xaxt='n',yaxt='n')
+    point.mat <- zero.mat <- matrix(NA,dim(values)[2],2) #hold vertices for later use
+    for(j in 1:dim(values)[2]){ 
+      if(j == dim(values)[2]){ #plots inner circle
+        one <- polarTOcart(angles*(j-1),inner.c)
+        two <- polarTOcart(angles*0,inner.c)
+        lines(c(one$x,two$x),c(one$y,two$y))
+      }else{
+        one <- polarTOcart(angles*(j-1),inner.c)
+        two <- polarTOcart(angles*j,inner.c)
+        lines(c(one$x,two$x),c(one$y,two$y))
+      }
+      point.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plots zerolines
+        one <- polarTOcart(angles*(j-1),inner.c+abs(min.v))
+        two <- polarTOcart(angles*0,inner.c+abs(min.v))
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2,col='red') 
+      }else{
+        one <- polarTOcart(angles*(j-1),inner.c+abs(min.v))
+        two <- polarTOcart(angles*j,inner.c+abs(min.v))
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2,col='red')       
+      }
+      text(one$x,one$y,colnames(values)[j],srt=90-angles*(j-1))
+      zero.mat[j,] <- c(one$x,one$y)
+      
+      if(j == dim(values)[2]){ #plots outer lines
+        one <- polarTOcart(angles*(j-1),outer.r)
+        two <- polarTOcart(angles*0,outer.r)
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2) 
+        lines(c(one$x,0),c(one$y,0),lty=2) 
+      }else{
+        one <- polarTOcart(angles*(j-1),outer.r)
+        two <- polarTOcart(angles*j,outer.r)
+        lines(c(one$x,two$x),c(one$y,two$y),lty=2) 
+        lines(c(one$x,0),c(one$y,0),lty=2)
+      }
+      text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,colnames(values)[j],srt=0 - angles*(j-1))
+    }
+    polygon(x=as.numeric(point.mat[,1]),y=as.numeric(point.mat[,2]),col=1)
+  }
+}
+
 
 
 
