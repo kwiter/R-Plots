@@ -92,7 +92,7 @@ squarePie <- function(data,size.gap = 10,Main.Title = 'Main Title',Sub.Title=NA,
   ys = c(.45,.45+iSide)
   dotted = c(1,ceiling(cumNum/nh)+1)
 
-  par(mar=c(0, 0, 0, 0), oma=c(0,0,0,0), bg="white", xpd=FALSE, xaxs="r", yaxs="i", mgp=c(2.1,.3,0), las=1, col.axis="#434343", col.main="#343434", tck=0, lend=1)
+  par(mar=c(0, 0, 0, 0), oma=c(0,0,0,0), bg="white",pty='s', xpd=FALSE, xaxs="r", yaxs="i", mgp=c(2.1,.3,0), las=1, col.axis="#434343", col.main="#343434", tck=0, lend=1)
   plot(0,0,xlim=c(0,1),ylim=c(0,1),type='n',xaxt='n',yaxt='n',bty='n',las=1,xlab="", ylab="", family="Helvetica", cex.main=1.5, cex.axis=0.8, cex.lab=0.8)
   rect(xleft = 0, xright = shift*(nw + .4*nw) + xs[1], 
        ybottom = ys[1] - shift*3.5 - 2*strheight(names(data)[1],cex=.75), ytop =  shift*(nh) + ys[2] + strheight(Main.Title) + shift,
