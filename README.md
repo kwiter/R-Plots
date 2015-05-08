@@ -33,7 +33,7 @@ This chart should be saved as a square
 # R-Radar-Chart
 Function for R that will produce a radar plot with confidence intervals and an indication of the zero line (red dashed). 
 
-radarChart()
+radarPlot()
 
 *    values: matrix of indivsXvalues giving mean response
 *    val.l: matrix of indivsXlow credible interval values
