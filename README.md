@@ -14,6 +14,8 @@
 dtree and ctree can be any icon.
 Just make sure the icon is cropped to the edges.
 
+https://cloud.githubusercontent.com/assets/6601105/7543497/d28b354e-f592-11e4-93de-14f6f5ed944d.png
+
 # R-SquarePie
 Square Pie or Waffle Chart for R
 
