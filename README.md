@@ -25,3 +25,14 @@ Needs colorRange function in kwiter/R-Colors/ColorTools.r
 
 This chart should be saved as a square
 
+# R-Radar-Chart
+Function for R that will produce a radar plot with confidence intervals and an indication of the zero line (red dashed). 
+
+*    values: matrix of indivsXvalues giving mean response
+*    val.l: matrix of indivsXlow credible interval values
+*    val.h: matrix of indivsXlow credible interval values
+*    scale.within: scale the values within each chart
+*    legend: add a legend
+  
+
+
