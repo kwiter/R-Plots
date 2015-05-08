@@ -14,7 +14,7 @@
 dtree and ctree can be any icon.
 Just make sure the icon is cropped to the edges.
 
-![Image](https://cloud.githubusercontent.com/assets/6601105/7543497/d28b354e-f592-11e4-93de-14f6f5ed944d.png)
+![Image](https://cloud.githubusercontent.com/assets/6601105/7543497/d28b354e-f592-11e4-93de-14f6f5ed944d.png?raw=true)
 
 
 # R-SquarePie
