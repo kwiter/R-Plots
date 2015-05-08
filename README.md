@@ -32,6 +32,9 @@ Needs colorRange function in kwiter/R-Colors/ColorTools.r
 
 This chart should be saved as a square
 
+![Image](https://cloud.githubusercontent.com/assets/6601105/7543779/382bd762-f595-11e4-9e91-03fd4aa0c963.png?raw=true)
+https://cloud.githubusercontent.com/assets/6601105/7543779/382bd762-f595-11e4-9e91-03fd4aa0c963.png
+
 # R-Radar-Chart
 Function for R that will produce a radar plot with confidence intervals and an indication of the zero line (red dashed). 
 
