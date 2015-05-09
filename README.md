@@ -43,7 +43,7 @@ radarPlot()
 
 *    values: matrix of indivsXvalues giving mean response
 *    val.l: matrix of indivsXlow credible interval values
-*    val.h: matrix of indivsXlow credible interval values
+*    val.h: matrix of indivsXhigh credible interval values
 *    scale.within: scale the values within each chart
 *    legend: add a legend
   
