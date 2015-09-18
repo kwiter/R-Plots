@@ -46,6 +46,7 @@ radarPlot()
 *    val.h: matrix of indivsXhigh credible interval values
 *    scale.within: scale the values within each chart
 *    legend: add a legend
+*    color = 'black' sets background color to black
   
-
+![Image](https://cloud.githubusercontent.com/assets/6601105/9971179/ef3b471c-5e27-11e5-9a8d-822b47f564d2.png?raw=true)
 
