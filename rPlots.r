@@ -147,24 +147,38 @@ squarePie <- function(data,size.gap = 10,Main.Title = 'Main Title',Sub.Title=NA,
 ####radar Plot
 ##
 
-radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F){
+radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F,color='black'){
   #values: matrix of indivsXvalues giving mean response
   #val.l: matrix of indivsXlow credible interval values
   #val.h: matrix of indivsXlow credible interval values
   #scale.within: scale the values within each chart
+  #color = 'black' sets background to black anythings else background is white
   #legend: add legend
   
+  if(!is.matrix(values)){ 
+    values = t(as.matrix(values))
+    val.l = t(as.matrix(val.l))
+    val.h = t(as.matrix(val.h))
+  }
+  if(is.null(colnames(values))) colnames(values) = 1:ncol(values)
+  
+  opar <- par()
+  on.exit(par(opar))
   #scale.within = F
   
   #values <- allQ[,-1] 
   #val.l <- allQ.lo[,-1]
   #val.h <- allQ.hi[,-1]
   
+  #need to alter colors
+  
   max.v <- max(val.h,na.rm=T)
   min.v <- min(val.l,na.rm=T)
   
-  dims = c(ceiling(sqrt(nrow(values))),nrow(values) -ceiling(sqrt(nrow(values))))
-  par(mfrow=c(dims[1],dims[2]),pty='s',mar=c(1,1,2,1),bg='black')
+  dims = c(ceiling(sqrt(nrow(values))),max(1,nrow(values) -ceiling(sqrt(nrow(values)))))
+  if(color == 'black'){col1 = 'black';col2 = 'white'}else{col1 = 'white';col2 = 'black'}
+  
+  par(mfrow=c(dims[1],dims[2]),pty='s',mar=c(1,1,2,1),bg=col1)
   for(i in 1:dim(values)[1]){  #if scaleing within
     
     if(scale.within==T){
@@ -203,7 +217,7 @@ radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F){
     #for(i in 1:dim(values)[1]){  #if scaling amoung
     plot( 1,1,xlim=c(-outer.r,outer.r),ylim=c(-outer.r,outer.r),
           type='n',xlab='',ylab='',main=rownames(values)[i],
-          bty='n',xaxt='n',yaxt='n',col.main='white')
+          bty='n',xaxt='n',yaxt='n',col.main=col2)
     
     point.mat <- val.mat <- out.mat <- inn.mat <- zer.mat <- matrix(NA,dim(values)[2],2) #hold vertices for later use
     for(j in 1:dim(values)[2]){ #plots values
@@ -275,21 +289,21 @@ radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F){
       if(j == dim(values)[2]){ #plots outer lines
         one <- polarTOcart(angles*(j-1),outer.r)
         two <- polarTOcart(angles*0,outer.r)
-        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col='white',lwd=2) 
+        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col=col2,lwd=2) 
         #lines(c(one$x,0),c(one$y,0),lty=2) 
       }else{
         one <- polarTOcart(angles*(j-1),outer.r)
         two <- polarTOcart(angles*j,outer.r)
-        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col='white',lwd=2) 
+        lines(c(one$x,two$x),c(one$y,two$y),lty=1,col=col2,lwd=2) 
         #lines(c(one$x,0),c(one$y,0),lty=2)
       }
       
       if(values[i,j] == 0)next
       par(xpd=T)
       if(colnames(values)[j]=='SL'){
-        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,GDsGS[i],srt=0 - angles*(j-1),col='white')  
+        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,GDsGS[i],srt=0 - angles*(j-1),col=col2)  
       }else{
-        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,colnames(values)[j],srt=0 - angles*(j-1),col='white')
+        text(one$x*(outer.r*1.05)/outer.r,one$y*(outer.r*1.1)/outer.r,colnames(values)[j],srt=0 - angles*(j-1),col=col2)
       }
       par(xpd=F)
     }
@@ -297,7 +311,7 @@ radarPlot <- function(values,val.l,val.h,scale.within = F,legend = F){
     #polygon(x=as.numeric(out.mat[,1]),y=as.numeric(out.mat[,2]),col=rgb(0,0,1,.25),border=NA)
     #polygon(x=as.numeric(out.mat[,1]),y=as.numeric(inn.mat[,2]),col='white',border=NA)
     #polygon(x=as.numeric(zer.mat[,1]),y=as.numeric(out.mat[,2]),col=rgb(1,0,0,.25),border=NA)
-    polygon(x=as.numeric(point.mat[,1]),y=as.numeric(point.mat[,2]),col=1,border=NA) 
+    polygon(x=as.numeric(point.mat[,1]),y=as.numeric(point.mat[,2]),col=col1,border=NA) 
   }
   
   ###legend
